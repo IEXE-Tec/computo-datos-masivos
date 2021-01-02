@@ -2,4 +2,5 @@
 sudo pip install -U \
     matplotlib \
     pandas \
-    scikit-learn
+    scikit-learn 
+    
