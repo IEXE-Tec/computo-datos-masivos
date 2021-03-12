@@ -1,0 +1,6 @@
+workspace.code-workspace
+partitioned
+what.py
+*.parquet
+*.tsv
+*.gz
