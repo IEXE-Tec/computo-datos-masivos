@@ -25,24 +25,8 @@ while [ \
 sleep 1
 done
 
-#Check if we're on an NVMe filesystem
-if [ $(readlink -f /dev/xvda) = "/dev/xvda" ]
+if [ $(readlink -f /dev/nvme0n1) = "/dev/nvme0n1" ]
 then
-  # Rewrite the partition table so that the partition takes up all the space that it can.
-  sudo growpart /dev/xvda 1
-
-  # Expand the size of the file system.
-  # Check if we are on AL2
-  STR=$(cat /etc/os-release)
-  SUB="VERSION_ID=\"2\""
-  if [[ "$STR" == *"$SUB"* ]]
-  then
-    sudo xfs_growfs -d /
-  else
-    sudo resize2fs /dev/xvda1
-  fi
-
-else
   # Rewrite the partition table so that the partition takes up all the space that it can.
   sudo growpart /dev/nvme0n1 1
 
@@ -55,5 +39,20 @@ else
     sudo xfs_growfs -d /
   else
     sudo resize2fs /dev/nvme0n1p1
+  fi
+
+else
+  # Rewrite the partition table so that the partition takes up all the space that it can.
+  sudo growpart /dev/xvda 1
+
+  # Expand the size of the file system.
+  # Check if we are on AL2
+  STR=$(cat /etc/os-release)
+  SUB="VERSION_ID=\"2\""
+  if [[ "$STR" == *"$SUB"* ]]
+  then
+    sudo xfs_growfs -d /
+  else
+    sudo resize2fs /dev/xvda1
   fi
 fi
