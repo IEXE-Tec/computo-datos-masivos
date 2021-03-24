@@ -3,7 +3,7 @@
 # Código fuente para el laboratorio 01: Formato de archivos Parquet.
 # =======================================================================================
 
-# Asegurate de correr 'pip install pyarrow', 'pip install pandas' y 'pip install s3fs' para poder ejecutar el programa.
+# Asegurate de correr 'pip install pyarrow pandas s3fs' para poder ejecutar el programa.
 from pyarrow import csv
 import pyarrow.parquet as pq
 from s3fs import S3FileSystem
@@ -23,13 +23,20 @@ print(f'Número de registros: {table.num_rows}')
 print(f'Shape: {table.shape}')
 print(f'Esquema: {table.schema}')
 
-# Se escribe el archivo en formato Parquet sin compresión
+# ---------------------------------------------------------------------------------------
+# Primer archivo: Se escribe el archivo en formato Parquet sin compresión
 pq.write_table(table, 'imdb_title_plain.parquet')
 
-# Mismos datos pero con compresión GZIP
+# ---------------------------------------------------------------------------------------
+# Segundo archivo archivo: Mismos datos pero con compresión GZIP
+# Consulta la documentación de PyArrow para conocer otros algoritmos de compresión de datos: 
+# https://arrow.apache.org/docs/python/generated/pyarrow.parquet.write_table.html#pyarrow.parquet.write_table
 pq.write_table(table, 'imdb_title_gzip.parquet', compression='GZIP')
 
-# Ahora se escriben particionando los datos por el tipo de película y el año de lanzamiento
+# ---------------------------------------------------------------------------------------
+# Tercer archivo: Ahora se escriben particionando los datos por el tipo de película y 
+# el año de lanzamiento. El argumento "partition_cols" indica una lista de columnas o
+# campos en los datos para hacer la partición. 
 pq.write_to_dataset(
     table, 
     compression='GZIP', 
@@ -37,15 +44,19 @@ pq.write_to_dataset(
     partition_cols=['titleType', 'startYear']
 )
 
-# La misma estructura de partición de archivos se replica pero en Amazon 
+# ---------------------------------------------------------------------------------------
+# Cuarto archivo: La misma estructura de partición de archivos se almacenan en S3
+# Ahora el parámetro "filesystem" le indica a la biblioteca que use un bucket en S3
+# como sistema de archivos para almacenar las particiones de archivos.
 pq.write_to_dataset(
     table, 
     compression='GZIP', 
-    root_path='iexetec_mcdia9999_imdb_title',  # reemplaza tu matrícula en esta línea 
+    root_path='iexetec-mcdia9999-imdb/title',  # reemplaza tu matrícula en esta línea 
     partition_cols=['titleType', 'startYear'], 
     filesystem=S3FileSystem()  # este objeto automáticamente toma tus credenciales de S3
 )
 
+# ---------------------------------------------------------------------------------------
 # Inspeccionar los metadatos del archivo comprimido en GZIP
 print('=' * 50)
 print('Metadata')

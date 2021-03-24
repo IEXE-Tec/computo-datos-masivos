@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# https://gist.github.com/wongcyrus/a4e726b961260395efa7811cab0b4516
+
 # Specify the desired volume size in GiB as a command-line argument. If not specified, default to 20 GiB.
 SIZE=${1:-20}
 
