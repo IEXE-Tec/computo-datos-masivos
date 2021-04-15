@@ -18,13 +18,17 @@ VOLUMEID=$(aws ec2 describe-instances \
 aws ec2 modify-volume --volume-id $VOLUMEID --size $SIZE
 
 # Wait for the resize to finish.
-while [ \
-  "$(aws ec2 describe-volumes-modifications \
+COUNTER=0
+while [[ \
+    "$(aws ec2 describe-volumes-modifications \
     --volume-id $VOLUMEID \
     --filters Name=modification-state,Values="optimizing","completed" \
     --query "length(VolumesModifications)"\
-    --output text)" != "1" ]; do
-sleep 1
+    --output text)" != "1" \
+    && $COUNTER != 5 ]];
+do
+    sleep 5
+    let COUNTER=COUNTER+1
 done
 
 if [ $(readlink -f /dev/nvme0n1) = "/dev/nvme0n1" ]
