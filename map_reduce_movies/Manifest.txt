@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Class-Path: Movies.jar
+Main-Class: MoviesNames.MoviesNamesDriver
