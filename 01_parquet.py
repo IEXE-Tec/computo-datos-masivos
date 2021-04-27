@@ -1,3 +1,5 @@
+# !/usr/bin/python
+# coding=utf-8
 # =======================================================================================
 #                         IEXE Tec - Cómputo de Datos Masivos
 # Código fuente para el laboratorio 01: Formato de archivos Parquet.
@@ -14,6 +16,8 @@ convert_opts = csv.ConvertOptions(strings_can_be_null=True)  # indica que los da
 
 # Se lee el archivo del sistema de archivos local
 table = csv.read_csv('title.basics.tsv', parse_options=parse_opts, convert_options=convert_opts)
+
+table = table.rename_columns(['tconst', 'titletype', 'primarytitle', 'originaltitle', 'isadult', 'startyear', 'endyear', 'runtimeminutes', 'genres'])
 
 # Escribir algunas propiedades de la tabla
 print(f'Nombre de columnas: {table.column_names}')
@@ -41,7 +45,7 @@ pq.write_to_dataset(
     table, 
     compression='GZIP', 
     root_path='partitioned', 
-    partition_cols=['titleType', 'startYear']
+    partition_cols=['titletype', 'startyear']
 )
 
 # ---------------------------------------------------------------------------------------
@@ -52,7 +56,7 @@ pq.write_to_dataset(
     table, 
     compression='GZIP', 
     root_path='iexetec-mcdia9999-imdb/title',  # reemplaza tu matrícula en esta línea 
-    partition_cols=['titleType', 'startYear'], 
+    partition_cols=['titletype', 'startyear'], 
     filesystem=S3FileSystem()  # este objeto automáticamente toma tus credenciales de S3
 )
 
