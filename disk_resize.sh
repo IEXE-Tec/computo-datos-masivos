@@ -31,7 +31,8 @@ do
     let COUNTER=COUNTER+1
 done
 
-if [ $(readlink -f /dev/nvme0n1) = "/dev/nvme0n1" ]
+
+if [ $(df | grep /$ | awk -F ' +' '{print $1}' -) = "/dev/nvme0n1" ]
 then
   # Rewrite the partition table so that the partition takes up all the space that it can.
   sudo growpart /dev/nvme0n1 1
